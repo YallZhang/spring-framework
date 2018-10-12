@@ -106,7 +106,8 @@ import org.springframework.transaction.support.TransactionSynchronizationUtils;
  * @see LazyConnectionDataSourceProxy
  * @see org.springframework.jdbc.core.JdbcTemplate
  */
-//DataSourceTransactionManager数据源事务处理器是针对JDBC连接提供的事务处理器实现，即数据源事务处理器把数据库Connection连接和当前线程进行绑定，通过直接调用数据库连接Connection的提交和回滚方法实现事务的提供和回滚处理。
+//DataSourceTransactionManager数据源事务处理器是针对JDBC连接提供的事务处理器实现
+// ，即数据源事务处理器把数据库Connection连接和当前线程进行绑定，通过直接调用数据库连接Connection的提交和回滚方法实现事务的提供和回滚处理。
 @SuppressWarnings("serial")
 public class DataSourceTransactionManager extends AbstractPlatformTransactionManager
 		implements ResourceTransactionManager, InitializingBean {

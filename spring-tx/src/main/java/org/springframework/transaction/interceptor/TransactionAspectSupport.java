@@ -68,7 +68,7 @@ import org.springframework.util.StringUtils;
  * @see #setTransactionAttributeSource
  */
 
-// 可以当做spring事务的入口invokeWithinTransaction
+// TransactionIntercepter调用本类 invokeWithinTransaction (..)
 public abstract class TransactionAspectSupport implements BeanFactoryAware, InitializingBean {
 
 	// NOTE: This class must not implement Serializable because it serves as base
@@ -270,8 +270,10 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 			throws Throwable {
 
 		// If the transaction attribute is null, the method is non-transactional.
+        //解析<tx:attributes>节点
 		final TransactionAttribute txAttr = getTransactionAttributeSource().getTransactionAttribute(method, targetClass);
 		final PlatformTransactionManager tm = determineTransactionManager(txAttr);
+		//连接点的唯一名，比如="com.train.mybatis.multi.data.service.impl.OrderDetailDaoImpl.doSave"
 		final String joinpointIdentification = methodIdentification(method, targetClass, txAttr);
 
 		if (txAttr == null || !(tm instanceof CallbackPreferringPlatformTransactionManager)) {
