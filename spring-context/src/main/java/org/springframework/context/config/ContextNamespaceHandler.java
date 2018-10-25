@@ -27,6 +27,8 @@ import org.springframework.context.annotation.ComponentScanBeanDefinitionParser;
  * @author Mark Fisher
  * @author Juergen Hoeller
  * @since 2.5
+ *
+ * 此类可以解析<context:component-scan>标签，即@Component，以及解析属性注解@AutoWire和@Resource
  */
 public class ContextNamespaceHandler extends NamespaceHandlerSupport {
 

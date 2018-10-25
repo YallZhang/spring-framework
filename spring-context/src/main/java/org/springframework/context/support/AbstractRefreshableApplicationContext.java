@@ -123,15 +123,17 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 			closeBeanFactory();
 		}
 		try {
-			DefaultListableBeanFactory beanFactory = createBeanFactory();
+            //重新创建一个BeanFactory，并交由Context来管理
+            DefaultListableBeanFactory beanFactory = this.createBeanFactory();
 			beanFactory.setSerializationId(getId());
-			customizeBeanFactory(beanFactory);
-			loadBeanDefinitions(beanFactory);
+			//自定义BeanFactory
+			this.customizeBeanFactory(beanFactory);
+			//加载BeanDefinition
+			this.loadBeanDefinitions(beanFactory);
 			synchronized (this.beanFactoryMonitor) {
 				this.beanFactory = beanFactory;
 			}
-		}
-		catch (IOException ex) {
+		} catch (IOException ex) {
 			throw new ApplicationContextException("I/O error parsing bean definition source for " + getDisplayName(), ex);
 		}
 	}
@@ -232,7 +234,6 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 	 * @see org.springframework.beans.factory.support.PropertiesBeanDefinitionReader
 	 * @see org.springframework.beans.factory.xml.XmlBeanDefinitionReader
 	 */
-	protected abstract void loadBeanDefinitions(DefaultListableBeanFactory beanFactory)
-			throws BeansException, IOException;
+	protected abstract void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) throws BeansException, IOException;
 
 }

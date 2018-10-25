@@ -59,8 +59,7 @@ public interface BeanDefinitionRegistry extends AliasRegistry {
 	 * @see RootBeanDefinition
 	 * @see ChildBeanDefinition
 	 */
-	void registerBeanDefinition(String beanName, BeanDefinition beanDefinition)
-			throws BeanDefinitionStoreException;
+	void registerBeanDefinition(String beanName, BeanDefinition beanDefinition) throws BeanDefinitionStoreException;
 
 	/**
 	 * Remove the BeanDefinition for the given name.

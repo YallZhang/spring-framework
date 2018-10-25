@@ -106,8 +106,8 @@ import org.springframework.transaction.support.TransactionSynchronizationUtils;
  * @see LazyConnectionDataSourceProxy
  * @see org.springframework.jdbc.core.JdbcTemplate
  */
-//DataSourceTransactionManagerÊı¾İÔ´ÊÂÎñ´¦ÀíÆ÷ÊÇÕë¶ÔJDBCÁ¬½ÓÌá¹©µÄÊÂÎñ´¦ÀíÆ÷ÊµÏÖ
-// £¬¼´Êı¾İÔ´ÊÂÎñ´¦ÀíÆ÷°ÑÊı¾İ¿âConnectionÁ¬½ÓºÍµ±Ç°Ïß³Ì½øĞĞ°ó¶¨£¬Í¨¹ıÖ±½Óµ÷ÓÃÊı¾İ¿âÁ¬½ÓConnectionµÄÌá½»ºÍ»Ø¹ö·½·¨ÊµÏÖÊÂÎñµÄÌá¹©ºÍ»Ø¹ö´¦Àí¡£
+//DataSourceTransactionManageræ•°æ®æºäº‹åŠ¡å¤„ç†å™¨æ˜¯é’ˆå¯¹JDBCè¿æ¥æä¾›çš„äº‹åŠ¡å¤„ç†å™¨å®ç°
+// ï¼Œå³æ•°æ®æºäº‹åŠ¡å¤„ç†å™¨æŠŠæ•°æ®åº“Connectionè¿æ¥å’Œå½“å‰çº¿ç¨‹è¿›è¡Œç»‘å®šï¼Œé€šè¿‡ç›´æ¥è°ƒç”¨æ•°æ®åº“è¿æ¥Connectionçš„æäº¤å’Œå›æ»šæ–¹æ³•å®ç°äº‹åŠ¡çš„æä¾›å’Œå›æ»šå¤„ç†ã€‚
 @SuppressWarnings("serial")
 public class DataSourceTransactionManager extends AbstractPlatformTransactionManager
 		implements ResourceTransactionManager, InitializingBean {
@@ -122,7 +122,7 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 	 * A DataSource has to be set to be able to use it.
 	 * @see #setDataSource
 	 */
-	//Êı¾İÔ´ÊÂÎñ´¦ÀíÆ÷Ä¬ÈÏ¹¹Ôì·½·¨£¬´´½¨Ò»¸öÊı¾İÔ´ÊÂÎñ´¦ÀíÆ÷ÊµÀı£¬²¢ÉèÖÃÔÊĞíÇ¶Ì×ÊÂÎñ
+	//æ•°æ®æºäº‹åŠ¡å¤„ç†å™¨é»˜è®¤æ„é€ æ–¹æ³•ï¼Œåˆ›å»ºä¸€ä¸ªæ•°æ®æºäº‹åŠ¡å¤„ç†å™¨å®ä¾‹ï¼Œå¹¶è®¾ç½®å…è®¸åµŒå¥—äº‹åŠ¡
 	public DataSourceTransactionManager() {
 		setNestedTransactionAllowed(true);
 	}
@@ -160,7 +160,7 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 			// If we got a TransactionAwareDataSourceProxy, we need to perform transactions
 			// for its underlying target DataSource, else data access code won't see
 			// properly exposed transactions (i.e. transactions for the target DataSource).
-			//Èç¹ûÊı¾İÔ´ÊÇÒ»¸öÊÂÎñ°ü×°Êı¾İÔ´´úÀí£¬Ôò»ñÈ¡ÊÂÎñ°ü×°´úÀíµÄÄ¿±êÊı¾İÔ´
+			//å¦‚æœæ•°æ®æºæ˜¯ä¸€ä¸ªäº‹åŠ¡åŒ…è£…æ•°æ®æºä»£ç†ï¼Œåˆ™è·å–äº‹åŠ¡åŒ…è£…ä»£ç†çš„ç›®æ ‡æ•°æ®æº
 			this.dataSource = ((TransactionAwareDataSourceProxy) dataSource).getTargetDataSource();
 		}
 		else {
@@ -207,7 +207,7 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 		return this.enforceReadOnly;
 	}
 
-	//Êı¾İÔ´ÊÂÎñ´¦ÀíÆ÷¶ÔÏó¹¹Ôì·½·¨µÄ»Øµ÷º¯Êı
+	//æ•°æ®æºäº‹åŠ¡å¤„ç†å™¨å¯¹è±¡æ„é€ æ–¹æ³•çš„å›è°ƒå‡½æ•°
 	@Override
 	public void afterPropertiesSet() {
 		if (getDataSource() == null) {
@@ -221,19 +221,19 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 		return getDataSource();
 	}
 
-	//ÓÉAbstractPlatformTransactionManagerÖĞµÄgetTransaction()Ä£¿é·½·¨µ÷ÓÃ
-	//´´½¨ÊÂÎñ£¬¶ÔÊı¾İ¿â¶øÑÔ£¬ÊÇÓÉConnectionÀ´Íê³ÉÊÂÎñ¹¤×÷µÄ¡£¸Ã·½·¨°ÑÊı¾İ¿âµÄ
-	// Connection¶ÔÏó·Åµ½Ò»¸öConnectionHolder¶ÔÏóÖĞ£¬È»ºó·â×°µ½Ò»¸ö
-	//DataSourceTransactionObject¶ÔÏóÖĞ
+	//ç”±AbstractPlatformTransactionManagerä¸­çš„getTransaction()æ¨¡å—æ–¹æ³•è°ƒç”¨
+	//åˆ›å»ºäº‹åŠ¡ï¼Œå¯¹æ•°æ®åº“è€Œè¨€ï¼Œæ˜¯ç”±Connectionæ¥å®Œæˆäº‹åŠ¡å·¥ä½œçš„ã€‚è¯¥æ–¹æ³•æŠŠæ•°æ®åº“çš„
+	// Connectionå¯¹è±¡æ”¾åˆ°ä¸€ä¸ªConnectionHolderå¯¹è±¡ä¸­ï¼Œç„¶åå°è£…åˆ°ä¸€ä¸ª
+	//DataSourceTransactionObjectå¯¹è±¡ä¸­
 	@Override
 	protected Object doGetTransaction() {
-		//´´½¨Êı¾İÔ´ÊÂÎñ¶ÔÏó
+		//åˆ›å»ºæ•°æ®æºäº‹åŠ¡å¯¹è±¡
 		DataSourceTransactionObject txObject = new DataSourceTransactionObject();
 
-		//ÉèÖÃÊı¾İÔ´ÊÂÎñ¶ÔÏó¶ÔÇ¶Ì×ÊÂÎñÊ¹ÓÃ±£´æµã
+		//è®¾ç½®æ•°æ®æºäº‹åŠ¡å¯¹è±¡å¯¹åµŒå¥—äº‹åŠ¡ä½¿ç”¨ä¿å­˜ç‚¹
 		txObject.setSavepointAllowed(isNestedTransactionAllowed());
 
-		//´ÓÏß³ÌÊÂÎñ¹ÜÀíÈİÆ÷ÖĞ»ñÈ¡´æ·ÅÊı¾İ¿âConnectionµÄ¶ÔÏóConnectionHolder
+		//ä»çº¿ç¨‹äº‹åŠ¡ç®¡ç†å®¹å™¨ä¸­è·å–å­˜æ”¾æ•°æ®åº“Connectionçš„å¯¹è±¡ConnectionHolder
 		ConnectionHolder conHolder = (ConnectionHolder) TransactionSynchronizationManager.getResource(this.dataSource);
 
 
@@ -241,10 +241,10 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 		return txObject;
 	}
 
-	//ÅĞ¶ÏÊÇ·ñÒÑ¾­´æÔÚÊÂÎñ
+	//åˆ¤æ–­æ˜¯å¦å·²ç»å­˜åœ¨äº‹åŠ¡
 	@Override
 	protected boolean isExistingTransaction(Object transaction) {
-		//¸ù¾İ´æ·ÅÊı¾İ¿âÁ¬½ÓµÄConnectionHolderµÄisTransactionActiveÊôĞÔÀ´ÅĞ¶Ï
+		//æ ¹æ®å­˜æ”¾æ•°æ®åº“è¿æ¥çš„ConnectionHolderçš„isTransactionActiveå±æ€§æ¥åˆ¤æ–­
 		DataSourceTransactionObject txObject = (DataSourceTransactionObject) transaction;
 		return (txObject.hasConnectionHolder() && txObject.getConnectionHolder().isTransactionActive());
 	}
@@ -258,41 +258,41 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 		Connection con = null;
 
 		try {
-			//Èç¹ûÊı¾İÔ´ÊÂÎñ¶ÔÏóµÄConnectionHolderÎªnull»òÕßÊÇÊÂÎñÍ¬²½µÄ
+			//å¦‚æœæ•°æ®æºäº‹åŠ¡å¯¹è±¡çš„ConnectionHolderä¸ºnullæˆ–è€…æ˜¯äº‹åŠ¡åŒæ­¥çš„
 
 			if (!txObject.hasConnectionHolder() || txObject.getConnectionHolder().isSynchronizedWithTransaction()) {
 				Connection newCon = this.dataSource.getConnection();
 				if (logger.isDebugEnabled()) {
 					logger.debug("Acquired Connection [" + newCon + "] for JDBC transaction");
 				}
-				//Èç¹ûconnectionHolderÎªnull,ÔòÎªÊı¾İÔ´ÊÂÎñ¶ÔÏóÉèÖÃConnectionHolder
+				//å¦‚æœconnectionHolderä¸ºnull,åˆ™ä¸ºæ•°æ®æºäº‹åŠ¡å¯¹è±¡è®¾ç½®ConnectionHolder
 				txObject.setConnectionHolder(new ConnectionHolder(newCon), true);
 			}
-			//ÉèÖÃÊı¾İÔ´ÊÂÎñ¶ÔÏóµÄÊÂÎñÍ¬²½
+			//è®¾ç½®æ•°æ®æºäº‹åŠ¡å¯¹è±¡çš„äº‹åŠ¡åŒæ­¥
 			txObject.getConnectionHolder().setSynchronizedWithTransaction(true);
-			//»ñÈ¡Êı¾İÔ´ÊÂÎñ¶ÔÏóµÄÊı¾İ¿âÁ¬½Ó
+			//è·å–æ•°æ®æºäº‹åŠ¡å¯¹è±¡çš„æ•°æ®åº“è¿æ¥
 			con = txObject.getConnectionHolder().getConnection();
-			//¸ù¾İÊı¾İÁ¬½ÓºÍÊÂÎñÊôĞÔ£¬»ñÈ¡Êı¾İ¿âÁ¬½ÓµÄÊÂÎñ¸ôÀë¼¶±ğ
+			//æ ¹æ®æ•°æ®è¿æ¥å’Œäº‹åŠ¡å±æ€§ï¼Œè·å–æ•°æ®åº“è¿æ¥çš„äº‹åŠ¡éš”ç¦»çº§åˆ«
 			Integer previousIsolationLevel = DataSourceUtils.prepareConnectionForTransaction(con, definition);
-			//ÎªÊı¾İÔ´ÊÂÎñ¶ÔÏóÉèÖÃÊÂÎñ¸ôÀë¼¶±ğ
+			//ä¸ºæ•°æ®æºäº‹åŠ¡å¯¹è±¡è®¾ç½®äº‹åŠ¡éš”ç¦»çº§åˆ«
 			txObject.setPreviousIsolationLevel(previousIsolationLevel);
 
 			// Switch to manual commit if necessary. This is very expensive in some JDBC drivers,
 			// so we don't want to do it unnecessarily (for example if we've explicitly
 			// configured the connection pool to set it already).
-			//Èç¹ûÊı¾İ¿âÁ¬½ÓÉèÖÃÁË×Ô¶¯ÊÂÎñÌá½»ÊôĞÔ£¬Ôò¹Ø±Õ×Ô¶¯Ìá½»
+			//å¦‚æœæ•°æ®åº“è¿æ¥è®¾ç½®äº†è‡ªåŠ¨äº‹åŠ¡æäº¤å±æ€§ï¼Œåˆ™å…³é—­è‡ªåŠ¨æäº¤
 			if (con.getAutoCommit()) {
-				//±£´æÊı¾İ¿âÁ¬½ÓÉèÖÃµÄ×Ô¶¯Á¬½Óµ½Êı¾İÔ´ÊÂÎñ¶ÔÏóÖĞ
+				//ä¿å­˜æ•°æ®åº“è¿æ¥è®¾ç½®çš„è‡ªåŠ¨è¿æ¥åˆ°æ•°æ®æºäº‹åŠ¡å¯¹è±¡ä¸­
 				txObject.setMustRestoreAutoCommit(true);
 				if (logger.isDebugEnabled()) {
 					logger.debug("Switching JDBC Connection [" + con + "] to manual commit");
 				}
-				//ÉèÖÃÊı¾İ¿âÁ¬½Ó×Ô¶¯ÊÂÎñÌá½»ÊôĞÔÎªfalse£¬¼´½ûÖ¹×Ô¶¯ÊÂÎñÌá½»
+				//è®¾ç½®æ•°æ®åº“è¿æ¥è‡ªåŠ¨äº‹åŠ¡æäº¤å±æ€§ä¸ºfalseï¼Œå³ç¦æ­¢è‡ªåŠ¨äº‹åŠ¡æäº¤
 				con.setAutoCommit(false);
 			}
 
 			prepareTransactionalConnection(con, definition);
-			//¼¤»îµ±Ç°Êı¾İÔ´ÊÂÎñ¶ÔÏóµÄÊÂÎñÅäÖÃ
+			//æ¿€æ´»å½“å‰æ•°æ®æºäº‹åŠ¡å¯¹è±¡çš„äº‹åŠ¡é…ç½®
 			txObject.getConnectionHolder().setTransactionActive(true);
 
 			int timeout = determineTimeout(definition);
@@ -301,7 +301,7 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 			}
 
 			// Bind the connection holder to the thread.
-			//°Ñµ±Ç°Êı¾İ¿âConnectionºÍÏß³Ì°ó¶¨
+			//æŠŠå½“å‰æ•°æ®åº“Connectionå’Œçº¿ç¨‹ç»‘å®š
 			if (txObject.isNewConnectionHolder()) {
 				TransactionSynchronizationManager.bindResource(getDataSource(), txObject.getConnectionHolder());
 			}
@@ -368,7 +368,7 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 		txObject.setRollbackOnly();
 	}
 
-	//²Ù×÷Íê³ÉÖ®ºóÇå³ı²Ù×÷
+	//æ“ä½œå®Œæˆä¹‹åæ¸…é™¤æ“ä½œ
 	@Override
 	protected void doCleanupAfterCompletion(Object transaction) {
 		DataSourceTransactionObject txObject = (DataSourceTransactionObject) transaction;
@@ -435,13 +435,13 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 	 * Used as transaction object by DataSourceTransactionManager.
 	 */
 	private static class DataSourceTransactionObject extends JdbcTransactionObjectSupport {
-		//ÊÇ·ñÓĞĞÂµÄConnectionHolder
+		//æ˜¯å¦æœ‰æ–°çš„ConnectionHolder
 		private boolean newConnectionHolder;
-		//ÊÇ·ñ±£´æ×Ô¶¯Ìá½»
+		//æ˜¯å¦ä¿å­˜è‡ªåŠ¨æäº¤
 		private boolean mustRestoreAutoCommit;
 
 		public void setConnectionHolder(ConnectionHolder connectionHolder, boolean newConnectionHolder) {
-			//Îª¸¸ÀàJdbcTransactionObjectSupportÉèÖÃConnectionHolder
+			//ä¸ºçˆ¶ç±»JdbcTransactionObjectSupportè®¾ç½®ConnectionHolder
 			super.setConnectionHolder(connectionHolder);
 			this.newConnectionHolder = newConnectionHolder;
 		}

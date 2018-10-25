@@ -23,6 +23,7 @@ package org.springframework.core.convert;
  * @author Keith Donald
  * @author Phillip Webb
  * @since 3.0
+ * 得到properties以后肯定要通过一些类型转换,才能从String类型得到T类型.那么这个类型转换.其实用的就是ConversionService以及其相关的一套类
  */
 public interface ConversionService {
 

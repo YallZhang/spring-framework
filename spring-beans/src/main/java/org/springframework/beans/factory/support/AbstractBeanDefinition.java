@@ -968,7 +968,10 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 	 * @throws BeanDefinitionValidationException in case of validation failure
 	 */
 	public void prepareMethodOverrides() throws BeanDefinitionValidationException {
-		// Check that lookup methods exists.
+		//spring配置中存在lookup-method和replace-method两个配置功能，
+		// 这两个配置的加载就是将配置存储在BeanDefinition中的methodOverrides属性里面。
+		// 功能的实现原理是在bean的实例化的时候如果检测到存在methodOverrides属性，
+		// 会动态的为当前bean生成代理并使用对应的拦截器为bean做增强处理。
 		MethodOverrides methodOverrides = getMethodOverrides();
 		if (!methodOverrides.isEmpty()) {
 			Set<MethodOverride> overrides = methodOverrides.getOverrides();

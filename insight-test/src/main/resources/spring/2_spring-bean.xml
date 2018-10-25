@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+
+    <context:property-placeholder location="classpath:config.properties" ignore-unresolvable="true"/>
+
+
+    <!--对象创建 的 几种方式-->
+    <!--1.通过默认的无参的构造函数-->
+    <bean id="user1" class="com.train.spring.framework.test.model.User"/>
+
+    <!--2.通过带参数的构造函数-->
+    <!--scope指定为多例之后，无论lazy-init是否为false，初始化ApplicationContext时都不会注册该bean,而是待访问到时创建-->
+    <bean id="user2" class="com.train.spring.framework.test.model.User" scope="prototype" lazy-init="false">
+        <!--注意点：这里参数的index一定要和构造函数形参出现的顺序一致；对于是引用类型的参数，一定要写全名，比如String-java.lang.String-->
+        <constructor-arg index="0" type="int" value="100"/>
+        <constructor-arg index="1" type="java.lang.String" value="JackChen"/>
+    </bean>
+
+    <bean id="name" class="java.lang.String">
+        <constructor-arg value="${myname}"/>
+    </bean>
+
+    <!--FieldRetrievingFactoryBean用于获取某类的静态字段(或者获取某类型实例的普通字段，这时需要指定property:targetObject和targetField)，将此字段作为一个单独的bean-->
+    <!--因为java中的枚举各个枚举值在经过编译后实际上就是类的静态字段，因此这里可以直接按获取类的静态字段来进行配置，只需指定staticField属性即可-->
+    <bean id="callcenter" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+        <property name="staticField" value="com.train.spring.framework.test.enums.Operator.CALL_CENTER"/>
+    </bean>
+    <!--MethodInvokingFactoryBean用来获得某个方法的返回值，该方法既可以是静态方法，也可以是实例方法。-->
+    <bean id="operator" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetClass" value="com.train.spring.framework.test.enums.Operator"/>
+        <property name="targetObject" ref="callcenter"/>
+        <property name="targetMethod" value="getSystemName"/>
+    </bean>
+    <bean id="user3" class="com.train.spring.framework.test.model.User" scope="singleton">
+        <constructor-arg index="0" type="int" value="12"/>
+        <constructor-arg index="1" type="java.lang.String" ref="operator"/>
+    </bean>
+
+    <!-- # 3.1 采用工厂类的实例方法创建对象 -->
+    <!-- 先创建工厂，再调用factory的实例方法创建user对象 -->
+    <bean id="factory" class="com.train.spring.framework.test.s2objectcreate.ObjectFactory"/>
+    <bean id="user4" factory-bean="factory" factory-method="getInstance"/>
+
+    <!-- # 3.2 采用工厂类的静态方法创建对象 -->
+    <!-- class 指定的就是工厂类型   factory-method  一定是工厂里面的“静态方法” -->
+    <bean id="user5" class="com.train.spring.framework.test.s2objectcreate.ObjectFactory" factory-method="getStaticInstance"/>
+
+</beans>

@@ -1014,8 +1014,7 @@ class MakeAnnotatedTypeModifiable extends AbstractMakeModifiable {
 @Aspect
 class MakeLockable {
 
-	@DeclareParents(value = "org.springframework..*",
-			defaultImpl=DefaultLockable.class)
+	@DeclareParents(value = "org.springframework..*", defaultImpl=DefaultLockable.class)
 	public static Lockable mixin;
 
 	@Before(value="execution(void set*(*)) && this(mixin)", argNames="mixin")
