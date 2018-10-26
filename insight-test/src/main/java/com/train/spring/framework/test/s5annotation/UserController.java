@@ -6,10 +6,9 @@ import javax.annotation.Resource;
 
 @Controller
 public class UserController {
-    //@Resource(name = "userService")
-    //或者直接：
+
     @Resource
-    private UserService userService;   //所以这里的属性写成userService2也可以运行。
+    private UserService userService;
 
     public String execute() {
         userService.save();

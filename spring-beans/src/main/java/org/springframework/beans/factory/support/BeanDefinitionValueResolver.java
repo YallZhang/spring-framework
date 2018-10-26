@@ -103,16 +103,17 @@ class BeanDefinitionValueResolver {
 	public Object resolveValueIfNecessary(Object argName, Object value) {
 		// We must check each value to see whether it requires a runtime reference
 		// to another bean to be resolved.
+		//即<property name='xx' ref=''>中的ref属性
 		if (value instanceof RuntimeBeanReference) {
 			RuntimeBeanReference ref = (RuntimeBeanReference) value;
+			//内部会再次调AbstractBeanFactory的getBean方法
 			return resolveReference(argName, ref);
 		}
 		else if (value instanceof RuntimeBeanNameReference) {
 			String refName = ((RuntimeBeanNameReference) value).getBeanName();
 			refName = String.valueOf(doEvaluate(refName));
 			if (!this.beanFactory.containsBean(refName)) {
-				throw new BeanDefinitionStoreException(
-						"Invalid bean name '" + refName + "' in bean reference for " + argName);
+				throw new BeanDefinitionStoreException("Invalid bean name '" + refName + "' in bean reference for " + argName);
 			}
 			return refName;
 		}
@@ -133,6 +134,7 @@ class BeanDefinitionValueResolver {
 			ManagedArray array = (ManagedArray) value;
 			Class<?> elementType = array.resolvedElementType;
 			if (elementType == null) {
+				// 如果未指定列表元素类型，则通过元素类型名获取元素类型或认为是Object类型
 				String elementTypeName = array.getElementTypeName();
 				if (StringUtils.hasText(elementTypeName)) {
 					try {
@@ -181,7 +183,7 @@ class BeanDefinitionValueResolver {
 			return copy;
 		}
 		else if (value instanceof TypedStringValue) {
-			// Convert value to target type here.
+			// 解析带有目标类型的字符串.
 			TypedStringValue typedStringValue = (TypedStringValue) value;
 			Object valueObject = evaluate(typedStringValue);
 			try {
@@ -349,6 +351,7 @@ class BeanDefinitionValueResolver {
 			}
 			else {
 				Object bean = this.beanFactory.getBean(refName);
+				//记录这个刚刚创建的bean都已经被哪些bean依赖了，以前当前主bean都已经依赖了哪些bean
 				this.beanFactory.registerDependentBean(refName, this.beanName);
 				return bean;
 			}
@@ -366,8 +369,7 @@ class BeanDefinitionValueResolver {
 	private Object resolveManagedArray(Object argName, List<?> ml, Class<?> elementType) {
 		Object resolved = Array.newInstance(elementType, ml.size());
 		for (int i = 0; i < ml.size(); i++) {
-			Array.set(resolved, i,
-					resolveValueIfNecessary(new KeyedArgName(argName, i), ml.get(i)));
+			Array.set(resolved, i, resolveValueIfNecessary(new KeyedArgName(argName, i), ml.get(i)));
 		}
 		return resolved;
 	}

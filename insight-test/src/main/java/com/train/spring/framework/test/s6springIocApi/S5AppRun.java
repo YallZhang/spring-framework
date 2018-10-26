@@ -8,7 +8,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class S5AppRun {
     public static void main(String[] args) {
-        ApplicationContext ac = new ClassPathXmlApplicationContext("spring/6_bean.xml");
+        ApplicationContext ac = new ClassPathXmlApplicationContext("spring/6_spring-bean.xml");
         UserAction userAction = (UserAction) ac.getBean("userAction");
         userAction.execute();
 

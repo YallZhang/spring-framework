@@ -257,7 +257,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
                 throw new BeanCurrentlyInCreationException(beanName);
             }
 
-            // Check if bean definition exists in this factory.
+            // 如果父容器不为空且本容器的BeanDefinitions缓存中找不到指定beanName的BeanDefinition，则交由父容器getBean并返回。
             BeanFactory parentBeanFactory = getParentBeanFactory();
             if (parentBeanFactory != null && !containsBeanDefinition(beanName)) {
                 // Not found -> check parent.
@@ -281,7 +281,6 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
                 String[] dependsOn = mbd.getDependsOn();
                 if (dependsOn != null) {
                     System.out.println();
-                    logger.debug("1. Guarantee initialization of beans that the current bean depends on. [" + beanName + "]");
                     for (String dep : dependsOn) {
                         logger.debug(dep);
                         if (isDependent(beanName, dep)) {
@@ -1636,8 +1635,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
                 // Register a DisposableBean implementation that performs all destruction
                 // work for the given bean: DestructionAwareBeanPostProcessors,
                 // DisposableBean interface, custom destroy method.
-                registerDisposableBean(beanName,
-                        new DisposableBeanAdapter(bean, beanName, mbd, getBeanPostProcessors(), acc));
+                registerDisposableBean(beanName, new DisposableBeanAdapter(bean, beanName, mbd, getBeanPostProcessors(), acc));
             } else {
                 // A bean with a custom scope...
                 Scope scope = this.scopes.get(mbd.getScope());

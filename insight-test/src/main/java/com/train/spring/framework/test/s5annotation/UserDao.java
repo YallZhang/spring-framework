@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 //同时还启用了注解驱动自动注入的功能（即还隐式地在内部注册了org.springframework.context.annotation.internalAutowireAnnotationBeanProcessor和
 // internalCommonAnnotationBeanPostProcessor）,这两个类时负责解析@AutoWried、@Resource注解的。
 
-//@Component("userDao") 等同于
 @Component
 public class UserDao {
     public UserDao() {

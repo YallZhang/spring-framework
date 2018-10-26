@@ -460,6 +460,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
         // Prepare method overrides.
         try {
+            //对override属性(lookup-method,replace-meethod标签)进行处理，
+            //     检测当前BeanDefinition的class中是否包含相应方法，并将override方法标记为覆盖，防止进行重载参数检查
             mbdToUse.prepareMethodOverrides();
         } catch (BeanDefinitionValidationException ex) {
             throw new BeanDefinitionStoreException(mbdToUse.getResourceDescription(), beanName, "Validation of method overrides failed", ex);
@@ -1185,6 +1187,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
     }
 
     /**
+     * populate...with...语法：填充...
      * Populate the bean instance in the given BeanWrapper with the property values from the bean definition.
      * @param beanName the name of the bean
      * @param rootBeanDefinition the bean definition for the bean
@@ -1208,9 +1211,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         boolean continueWithPropertyPopulation = true;
 
         if (!rootBeanDefinition.isSynthetic() && hasInstantiationAwareBeanPostProcessors()) {
-            for (BeanPostProcessor bp : getBeanPostProcessors()) {
-                if (bp instanceof InstantiationAwareBeanPostProcessor) {
-                    InstantiationAwareBeanPostProcessor ibp = (InstantiationAwareBeanPostProcessor) bp;
+            List<BeanPostProcessor> beanPostProcessorList = getBeanPostProcessors();
+            for (BeanPostProcessor beanPostProcessor : beanPostProcessorList) {
+                if (beanPostProcessor instanceof InstantiationAwareBeanPostProcessor) {
+                    InstantiationAwareBeanPostProcessor ibp = (InstantiationAwareBeanPostProcessor) beanPostProcessor;
                     if (!ibp.postProcessAfterInstantiation(beanWrapper.getWrappedInstance(), beanName)) {
                         continueWithPropertyPopulation = false;
                         break;
@@ -1223,17 +1227,19 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             return;
         }
 
-        if (rootBeanDefinition.getResolvedAutowireMode() == RootBeanDefinition.AUTOWIRE_BY_NAME ||
-                rootBeanDefinition.getResolvedAutowireMode() == RootBeanDefinition.AUTOWIRE_BY_TYPE) {
+        // 首先处理autowire依赖注入，根据Bean的名字或类型进行注入
+        //判断<bean id='' class='' autowire=''>中autowire的属性值是byName还是byType
+        int resolvedAutowireMode = rootBeanDefinition.getResolvedAutowireMode();
+        if (resolvedAutowireMode == RootBeanDefinition.AUTOWIRE_BY_NAME || resolvedAutowireMode == RootBeanDefinition.AUTOWIRE_BY_TYPE) {
             MutablePropertyValues newPvs = new MutablePropertyValues(pvs);
 
-            logger.debug("Add property values based on autowire by name if applicable.");
-            if (rootBeanDefinition.getResolvedAutowireMode() == RootBeanDefinition.AUTOWIRE_BY_NAME) {
+            if (resolvedAutowireMode == RootBeanDefinition.AUTOWIRE_BY_NAME) {
+                logger.debug("Add property values based on autowire by name.");
                 autowireByName(beanName, rootBeanDefinition, beanWrapper, newPvs);
             }
 
-            logger.debug("Add property values based on autowire by type if applicable.");
-            if (rootBeanDefinition.getResolvedAutowireMode() == RootBeanDefinition.AUTOWIRE_BY_TYPE) {
+            if (resolvedAutowireMode== RootBeanDefinition.AUTOWIRE_BY_TYPE) {
+                logger.debug("Add property values based on autowire by type.");
                 autowireByType(beanName, rootBeanDefinition, beanWrapper, newPvs);
             }
 
@@ -1245,6 +1251,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
         if (hasInstAwareBpps || needsDepCheck) {
             PropertyDescriptor[] filteredPds = filterPropertyDescriptorsForDependencyCheck(beanWrapper, rootBeanDefinition.allowCaching);
+            // 在为Bean注入依赖前进行后置处理，比如检查@Required是否满足，添加或移除Property
             if (hasInstAwareBpps) {
                 for (BeanPostProcessor bp : getBeanPostProcessors()) {
                     if (bp instanceof InstantiationAwareBeanPostProcessor) {
@@ -1256,11 +1263,14 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
                     }
                 }
             }
+
+            // 进行依赖检查
             if (needsDepCheck) {
                 checkDependencies(beanName, rootBeanDefinition, filteredPds, pvs);
             }
         }
 
+        // 两阶段：1.递归创建所依赖的bean  2.调用beanWrapper.setPropertyValues设置属性值
         logger.debug("applyPropertyValues: " + beanName);
         applyPropertyValues(beanName, rootBeanDefinition, beanWrapper, pvs);
     }
@@ -1490,7 +1500,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
                     throw new BeanCreationException(mBeanDefinition.getResourceDescription(), beanName, "Error setting property values", ex);
                 }
             }
+
             original = mutablePropertyValues.getPropertyValueList();
+
         } else {
             original = Arrays.asList(propertyValues.getPropertyValues());
         }
@@ -1499,9 +1511,12 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         if (converter == null) {
             converter = beanWrapper;
         }
+        // valueResolver用于解析BeanDefinition中的PropertyValue
         BeanDefinitionValueResolver valueResolver = new BeanDefinitionValueResolver(this, beanName, mBeanDefinition, converter);
 
         // Create a deep copy, resolving any references for values.
+        //这里不能直接将PropertyValue设置到Bean中，以防Bean内改变这个propertyValue，所以需要创建一个深拷贝的副本后再设置值
+        //这个副本持有的Property会被注入到Bean中
         List<PropertyValue> deepCopy = new ArrayList<PropertyValue>(original.size());
         boolean resolveNecessary = false;
         for (PropertyValue pv : original) {
@@ -1510,6 +1525,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             } else {
                 String propertyName = pv.getName();
                 Object originalValue = pv.getValue();
+                //重点！
+                //将BeanDefinition中定义的Property解析为真正的对象，在这里会去创建当前bean所依赖的bean
                 Object resolvedValue = valueResolver.resolveValueIfNecessary(pv, originalValue);
                 Object convertedValue = resolvedValue;
                 boolean convertible = beanWrapper.isWritableProperty(propertyName) &&

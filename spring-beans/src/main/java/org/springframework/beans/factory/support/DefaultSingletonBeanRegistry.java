@@ -182,7 +182,6 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 * @return the registered singleton object, or {@code null} if none found
 	 */
 	protected Object getSingleton(String beanName, boolean allowEarlyReference) {
-		logger.debug("首先从缓存singletolObjects中获取 ["+beanName+"]");
 		Object singletonObject = this.singletonObjects.get(beanName);
 		if (singletonObject == null && isSingletonCurrentlyInCreation(beanName)) {
 			logger.debug("没有从缓存singletolObjects中获取到 ["+beanName+"]");
@@ -419,6 +418,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 			Set<String> dependentBeans = this.dependentBeanMap.get(canonicalName);
 			if (dependentBeans == null) {
 				dependentBeans = new LinkedHashSet<String>(8);
+				//记录都有哪些bean依赖了canonicalName，那么在这些bean销毁前应该首先销毁这个被依赖的bean
 				this.dependentBeanMap.put(canonicalName, dependentBeans);
 			}
 			dependentBeans.add(dependentBeanName);
@@ -427,6 +427,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 			Set<String> dependenciesForBean = this.dependenciesForBeanMap.get(dependentBeanName);
 			if (dependenciesForBean == null) {
 				dependenciesForBean = new LinkedHashSet<String>(8);
+				//dependenciesForBeanMap记录当前bean都依赖了哪些bean
 				this.dependenciesForBeanMap.put(dependentBeanName, dependenciesForBean);
 			}
 			dependenciesForBean.add(canonicalName);

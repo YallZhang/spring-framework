@@ -244,17 +244,19 @@ public abstract class AbstractNestablePropertyAccessor extends AbstractPropertyA
 		return (this.rootObject != null ? this.rootObject.getClass() : null);
 	}
 
+	//这段代码里我们可以看到，首先在嵌套属性中取得嵌套最底层的属性的访问器，然后将对属性名进行解析，将解析结果封装在PropertyTokenHolder中
 	@Override
 	public void setPropertyValue(String propertyName, Object value) throws BeansException {
 		AbstractNestablePropertyAccessor nestedPa;
 		try {
+			//获取属性访问器
 			nestedPa = getPropertyAccessorForPropertyPath(propertyName);
+		} catch (NotReadablePropertyException ex) {
+			throw new NotWritablePropertyException(getRootClass(), this.nestedPath + propertyName, "Nested property in path '" + propertyName + "' does not exist", ex);
 		}
-		catch (NotReadablePropertyException ex) {
-			throw new NotWritablePropertyException(getRootClass(), this.nestedPath + propertyName,
-					"Nested property in path '" + propertyName + "' does not exist", ex);
-		}
-		PropertyTokenHolder tokens = getPropertyNameTokens(getFinalPath(nestedPa, propertyName));
+		// 将propertyName解析为PropertyTokenHolder，根据tokens.keys是否为空 分为集合和非集合类型
+		String finalPath = getFinalPath(nestedPa, propertyName);
+		PropertyTokenHolder tokens = getPropertyNameTokens(finalPath);
 		nestedPa.setPropertyValue(tokens, new PropertyValue(propertyName, value));
 	}
 
@@ -284,6 +286,7 @@ public abstract class AbstractNestablePropertyAccessor extends AbstractPropertyA
 
 	protected void setPropertyValue(PropertyTokenHolder tokens, PropertyValue pv) throws BeansException {
 		if (tokens.keys != null) {
+			//处理诸如Array、List、Map类型的属性
 			processKeyedProperty(tokens, pv);
 		}
 		else {
@@ -814,18 +817,40 @@ public abstract class AbstractNestablePropertyAccessor extends AbstractPropertyA
 	 * Recursively navigate to return a property accessor for the nested property path.
 	 * @param propertyPath property path, which may be nested
 	 * @return a property accessor for the target bean
+	 * <beans>
+	<bean id="a" class="greedystar.entity.A" lazy-init="true">
+	<property name="name" value="Alvin"/>
+	<property name="id" value="123"/>
+	</bean>
+
+	<bean id="b" class="greedystar.entity.B" lazy-init="true">
+	<property name="a" ref="a"/>
+	嵌套属性。代码中通过递归取得嵌套最底层的属性的访问器，也就是a.name中name属性的访问器。
+	<property name="a.name" value="李四"/>
+	</bean>
+	</beans>
+	---------------------
+	作者：一颗贪婪的星
+	来源：CSDN
+	原文：https://blog.csdn.net/greedystar/article/details/81871860
+	版权声明：本文为博主原创文章，转载请附上博文链接！
 	 */
 	@SuppressWarnings("unchecked")  // avoid nested generic
 	protected AbstractNestablePropertyAccessor getPropertyAccessorForPropertyPath(String propertyPath) {
+		// 查找第一个嵌套属性路径分隔符，即"."，的位置
 		int pos = PropertyAccessorUtils.getFirstNestedPropertySeparatorIndex(propertyPath);
 		// Handle nested properties recursively.
 		if (pos > -1) {
+			// 包含分隔符
 			String nestedProperty = propertyPath.substring(0, pos);
 			String nestedPath = propertyPath.substring(pos + 1);
 			AbstractNestablePropertyAccessor nestedPa = getNestedPropertyAccessor(nestedProperty);
+			// 递归
 			return nestedPa.getPropertyAccessorForPropertyPath(nestedPath);
 		}
 		else {
+			// 不包含分隔符，即找到了嵌套属性路径中最底层的属性
+			// 比如嵌套的a.b，则会找到b这一个属性访问器
 			return this;
 		}
 	}
@@ -933,6 +958,28 @@ public abstract class AbstractNestablePropertyAccessor extends AbstractPropertyA
 	}
 
 	/**
+	 *<beans>
+	 <bean id="a" class="greedystar.entity.A" lazy-init="true">
+	 <property name="name" value="Alvin"/>
+	 <property name="id" value="123"/>
+	 <property name="roles">
+	 <list>
+	 <value>USER</value>
+	 <value>ADMIN</value>
+	 </list>
+	 </property>
+	 </bean>
+
+	 <bean id="b" class="greedystar.entity.B" lazy-init="true">
+	 <property name="a" ref="a"/>
+	 <property name="a.name" value="李四"/>
+	 <property name="a.roles[0]" value="USER1"/>
+	 <property name="a.roles[1]" value="ADMIN1"/>
+	 </bean>
+	 </beans>
+	 当解析到a.roles[0]这个属性时，会把这个属性名解析到PropertyTokenHolder对象中
+
+
 	 * Parse the given property name into the corresponding property name tokens.
 	 * @param propertyName the property name to parse
 	 * @return representation of the parsed property tokens

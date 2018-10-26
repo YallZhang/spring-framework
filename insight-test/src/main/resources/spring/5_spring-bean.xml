@@ -7,17 +7,8 @@
             http://www.springframework.org/schema/beans/spring-beans.xsd
             http://www.springframework.org/schema/context
             http://www.springframework.org/schema/context/spring-context.xsd">
-    <!--采用注解的方式注入，采用注解的方式注入属性 可以简化Spring的IOC容器配置!-->
-    <!--使用注解的步骤：
-        1. 先引入context名称空间 xmlns:context="http://www.springframework.org/schema/context；
-        2。开启注解扫描；
-        3.使用注解
-     -->
 
-    <!--开启注解扫描  base-package指定扫描哪个包。-->
-    <!--默认情况下，<context:component-scan>查找使用stereotype annotation标注的类
-        这些annotation包括@Component/@Repository/@Service/@Controller-->
-    <context:component-scan base-package="com.train.spring.framework.test.s5annotation"></context:component-scan>
+    <context:component-scan base-package="com.train.spring.framework.test.s5annotation"/>
 
     <bean id="userDao" class="com.train.spring.framework.test.s5annotation.UserDao" />
     <bean id="userDao13" class="com.train.spring.framework.test.s5annotation.UserDao"/>
