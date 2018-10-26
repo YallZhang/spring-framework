@@ -1129,6 +1129,32 @@ project("spring-framework-bom") {
 	}
 }
 
+def org_slf4j_version = '1.7.5'
+def logback_version = '1.0.13'
+
+project("insight-spring-context") {
+	description = "Insight Spring Context"
+
+	apply plugin: "groovy"
+
+	dependencies {
+		compile(project(":spring-aop"))
+		compile(project(":spring-beans"))
+		compile(project(":spring-core"))
+		compile(project(":spring-context"))
+		compile(project(":spring-expression"))
+
+		compile group: 'org.slf4j', name: 'slf4j-api', version: "$org_slf4j_version"
+		compile group: 'org.slf4j', name: 'jcl-over-slf4j', version: "$org_slf4j_version"
+		compile group: 'org.slf4j', name: 'log4j-over-slf4j', version: "$org_slf4j_version"
+		compile group: 'org.slf4j', name: 'jul-to-slf4j', version: "$org_slf4j_version"
+
+		compile group: 'ch.qos.logback', name: 'logback-classic', version: "$logback_version"
+		compile group: 'ch.qos.logback', name: 'logback-core', version: "$logback_version"
+
+	}
+}
+
 sonarqube {
 	properties {
 		property "sonar.projectName", "Spring Framework"
