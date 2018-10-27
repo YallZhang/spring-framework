@@ -725,6 +725,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
         // Trigger initialization of all non-lazy singleton beans...
         for (String beanName : beanNames) {
             RootBeanDefinition bd = getMergedLocalBeanDefinition(beanName);
+            //初始化非抽象的、单例的、非懒加载的BeanDefinition
             if (!bd.isAbstract() && bd.isSingleton() && !bd.isLazyInit()) {
                 if (isFactoryBean(beanName)) {
                     final FactoryBean<?> factory = (FactoryBean<?>) getBean(FACTORY_BEAN_PREFIX + beanName);
@@ -744,7 +745,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
                         getBean(beanName);
                     }
                 } else {
-                    logger.debug("will getBean: ["+beanName +"]");
+                    logger.debug("will getBean: [" + beanName + "]");
                     getBean(beanName);
                 }
             }
@@ -846,7 +847,11 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
         if (existingDefinition != null || containsSingleton(beanName)) {
             resetBeanDefinition(beanName);
         }
-        logger.debug("registerBeanDefinition: " + beanName + " end...");
+        //todo:如果发现这里运行出错，可删除这一行.
+        existingDefinition = this.beanDefinitionMap.get(beanName);
+        Object aopOrdered = existingDefinition.getPropertyValues().get("order");
+        String lo = aopOrdered != null ? "AOPOrder:" + aopOrdered : "";
+        logger.debug("registerBeanDefinition: " + beanName + " end..." + lo);
     }
 
     @Override

@@ -158,6 +158,7 @@ final class JdkDynamicAopProxy implements AopProxy, InvocationHandler, Serializa
 
 		TargetSource targetSource = this.advised.targetSource;
 		Class<?> targetClass = null;
+
 		Object target = null;
 
 		try {

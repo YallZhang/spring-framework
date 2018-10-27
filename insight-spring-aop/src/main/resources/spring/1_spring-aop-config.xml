@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:component-scan base-package="org.springframework.train.aop.insight.explore"/>
+
+    <bean id="userMapperImpl" class="org.springframework.train.aop.insight.explore.UserMapperImpl"/>
+    <bean id="supplierMapperImpl" class="org.springframework.train.aop.insight.explore.SupplierMapperImpl"/>
+    <bean id="myAspectHandler" class="org.springframework.train.aop.insight.explore.AspectHandler"/>
+
+    <aop:config proxy-target-class="false">
+        <aop:pointcut id="myPointCut" expression="execution(* org.springframework.train.aop.insight.explore.*Impl.inser*(..))"/>
+        <!--一个切面只能指定一个顺序，里面的advice统一使用这个顺序，默认的顺序是最小的-22343432，最开始执行-->
+        <aop:aspect id="wohaha" ref="myAspectHandler" order="2">
+            <aop:before method="begin" pointcut-ref="myPointCut"/>
+            <aop:after method="after" pointcut-ref="myPointCut"/>
+            <aop:after-returning method="afterReturning" pointcut-ref="myPointCut"/>
+            <aop:after-throwing method="afterThrowing" pointcut-ref="myPointCut"/>
+        </aop:aspect>
+        <aop:aspect id="woxixi" ref="myAspectHandler" order="4">
+
+        </aop:aspect>
+    </aop:config>
+</beans>
+
+
+        <!--<aop:pointcut标签元素 生成切面表达式bean:AspectJExpressionPointcut-->
+        <!--<aop:before 、<aop:after>  等元素 生成bean ： org.springframework.aop.aspectj.AspectJPointcutAdvisor#0-->
+
+
+        <!--< aop:advisor>和< aop:aspect>的(通知和方面)区别：advisor大多用于事务配置
+                具体参考https://blog.csdn.net/u011983531/article/details/70504281-->
+
+        <!--1、Adivisor是一种特殊的Aspect，Advisor代表spring中的Aspect-->
+        <!--2、区别：advisor只持有一个Pointcut和一个advice，而aspect可以多个pointcut和多个advice-->
+        <!--<aop:advisor advice-ref="dataSourceExchange" pointcut-ref="transactionPointCut" order="1"></aop:advisor>-->
+        <!--<aop:advisor advice-ref="txAdvice" pointcut-ref="transactionPointCut" order="2"></aop:advisor>-->
+
+
+
+
+
+
+
+
+
+
+

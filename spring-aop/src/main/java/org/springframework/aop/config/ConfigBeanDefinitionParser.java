@@ -126,6 +126,8 @@ class ConfigBeanDefinitionParser implements BeanDefinitionParser {
 	 * created by the '{@code <aop:config/>}' tag. Will force class proxying if the
 	 * '{@code proxy-target-class}' attribute is set to '{@code true}'.
 	 * @see AopNamespaceUtils
+	 *
+	 * 最终生成bean的代理时会用到AspectJAwareAdvisorAutoProxyCreator。即applyBeanPostProcessorsBeforeInstantiation(...)中。
 	 */
 	private void configureAutoProxyCreator(ParserContext parserContext, Element element) {
 		AopNamespaceUtils.registerAspectJAutoProxyCreatorIfNecessary(parserContext, element);

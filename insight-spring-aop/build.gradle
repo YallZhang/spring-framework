@@ -1,0 +1,42 @@
+description = "Insight Spring Context"
+
+group 'org.springframework'
+version '4.3.20.BUILD-SNAPSHOT'
+
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+def org_slf4j_version = '1.7.5'
+def logback_version = '1.0.13'
+
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+
+    compile(project(":spring-aop"))
+    compile(project(":spring-beans"))
+    compile(project(":spring-core"))
+    compile(project(":spring-context"))
+    compile(project(":spring-context-support"))
+    compile(project(":spring-expression"))
+    compile(project(":spring-tx"))
+
+    compile group: 'org.slf4j', name: 'slf4j-api', version: "$org_slf4j_version"
+    compile group: 'org.slf4j', name: 'jcl-over-slf4j', version: "$org_slf4j_version"
+    compile group: 'org.slf4j', name: 'log4j-over-slf4j', version: "$org_slf4j_version"
+    compile group: 'org.slf4j', name: 'jul-to-slf4j', version: "$org_slf4j_version"
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: "$logback_version"
+    compile group: 'ch.qos.logback', name: 'logback-core', version: "$logback_version"
+
+//    spring-aop功能需要的jar包：aspectj 切面
+    ajc("org.aspectj:aspectjtools:${aspectjVersion}")
+    rt("org.aspectj:aspectjrt:${aspectjVersion}")
+    compile("org.aspectj:aspectjweaver:${aspectjVersion}")
+}

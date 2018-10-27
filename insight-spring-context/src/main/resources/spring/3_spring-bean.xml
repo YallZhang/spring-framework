@@ -9,8 +9,7 @@
             http://www.springframework.org/schema/context/spring-context.xsd">
 
     <!-- 当注解和spring.xml文件同时存在时，且id名相同，那么xml文件的bean的优先级高于注解的bean，注解bean会被覆盖。
-         具体是在BeanDefinition缓存中覆盖的
-         另外，只有当前类也被spring管理，其中的@Resource属性才能被加载进来。-->
+         具体是在BeanDefinition缓存中覆盖的-->
     <!--日志如下：[o.s.b.f.s.DefaultListableBeanFactory:809] Overriding bean definition for bean 'user' with a different definition:
     replacing
              [Generic bean: class [org.springframework.train.context.insight.s3propertyinject.User]; scope=singleton; abstract=false; lazyInit=false; autowireMode=0; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=null; factoryMethodName=null; initMethodName=null; destroyMethodName=null; defined in file [F:\java_train_zyn\spring-framework\insight-test\target\classes\org.springframework.train.context.insight\s3propertyinject\User.class]]

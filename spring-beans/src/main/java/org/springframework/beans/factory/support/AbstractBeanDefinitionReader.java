@@ -223,6 +223,7 @@ public abstract class AbstractBeanDefinitionReader implements EnvironmentCapable
 				}
 				if (logger.isDebugEnabled()) {
 					logger.debug("Loaded " + loadCount + " bean definitions from location pattern [" + location + "]");
+
 				}
 				return loadCount;
 			}

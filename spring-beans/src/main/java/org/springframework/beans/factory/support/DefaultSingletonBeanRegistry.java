@@ -184,7 +184,6 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	protected Object getSingleton(String beanName, boolean allowEarlyReference) {
 		Object singletonObject = this.singletonObjects.get(beanName);
 		if (singletonObject == null && isSingletonCurrentlyInCreation(beanName)) {
-			logger.debug("没有从缓存singletolObjects中获取到 ["+beanName+"]");
 			synchronized (this.singletonObjects) {
 				singletonObject = this.earlySingletonObjects.get(beanName);
 				if (singletonObject == null && allowEarlyReference) {
@@ -259,7 +258,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 					//将新创建的bean加入缓存，并且删除加载bean过程中所记录的各种辅助状态,这些辅助状态主要是在回调方法创建bean时候引入的
 					//缓存private Map<String, Object> singletonObjects; 位于DefaultSingletonBeanRegistry类中,
 					// 该类拥有的subClass:AbstractAutowireCapableBeanFactory、AbstractBeanFactory、DefaultListableBeanFactory
-					logger.info("将新创建的bean: ["+beanName+ "] 加入DefaultSingletonBeanRegistry类的缓存singletonObjects中");
+					logger.info("将新创建的bean: ["+beanName+ "] 加入缓存singletonObjects中");
 					addSingleton(beanName, singletonObject);
 					System.out.println();
 				}

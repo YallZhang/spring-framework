@@ -519,6 +519,10 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader i
             System.out.println();
 
             // Tell the subclass to refresh the internal bean factory.
+            //<aop:config>节点被解析为name=org.springframework.aop.config.internalAutoProxyCreator的BeanDeifinition，并且指定一个Order属性，默认是最小值：-223XXXXX[Ordered.HIGHEST_PRECEDENCE]
+            //内部节点<pointCut>节点被解析为name=org.springframework.aop.aspectj.AspectJExpressionPointcut的BeanDefinition；pointCut用于匹配被代理的类的方法。
+            //<aop:before>被解析为代表AspectJMethodBeforeAdvice的BeanDefinition
+            //以此类推：AspectJAfterAdvice、AspectJAfterReturningAdvice、AspectJAroundAdvice
             logger.info("二、obtainFreshBeanFactory begin...........");
             ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
             logger.info("二、obtainFreshBeanFactory end...........");
@@ -554,6 +558,13 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader i
 
                 // Register bean processors that intercept bean creation.
                 //BeanFactoryPostProcessor可以修改BEAN的配置信息而BeanPostProcessor不能
+                //如果xml中配置的有<aop:config>，那么这一步会根据第二步创建的BeanDefinition[名字是AUTO_PROXY_CREATOR_BEAN_NAME =
+                //"org.springframework.aop.config.internalAutoProxyCreator"。Bean的类型是AspectJAwareAdvisorAutoProxyCreator]
+                //来创建一个BeanPostProcessor: bean: name也是org.springframework.aop.config.internalAutoProxyCreator。
+                //之后把这个bean注册到beanFactory中，等待第11步预加载bean的时候使用。使用方式：
+                //在第11步：这个AspectJAwareAdvisorAutoProxyCreator的BeanPostProcessor的作用是：
+                //在实例化bean结束后，如果需要对其进行代理，那么会在init-method执行前后调用BeanPostProcessor的postProcessBeforeInitialization(.)
+                //和postProcessAfterInitialization(.)方法。最后等于是BeanPostProcessor把原本的bean修改了，并返回修改后的bean
                 logger.info("六、registerBeanPostProcessors begin...........");
                 registerBeanPostProcessors(beanFactory);
                 logger.info("六、registerBeanPostProcessors end...........");

@@ -2,6 +2,9 @@ package org.springframework.train.context.insight.s1hellospring;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class XmlApplicationContexShow {
     public void testIOC() {
         //此种方式在通过ApplicationContext获取bean之前就已经把所有的bean注册到上下文中了。applicationContext.getBean(..)内部也只是调用内部的BeanFactory获取bean实例
@@ -23,17 +26,10 @@ public class XmlApplicationContexShow {
         getIOC2.testIOC();
 
 
-
-
-
-
-
-
-
-
-
-
-
+        List<String> dsds = new ArrayList<String>();
+        dsds.add("23");
+        String sa = dsds.stream().findFirst().get();
+        System.out.println(sa);
 
 
     }
