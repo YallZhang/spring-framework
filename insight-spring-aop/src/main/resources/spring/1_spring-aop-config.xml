@@ -14,7 +14,11 @@
     <bean id="supplierMapperImpl" class="org.springframework.train.aop.insight.explore.SupplierMapperImpl"/>
     <bean id="myAspectHandler" class="org.springframework.train.aop.insight.explore.AspectHandler"/>
 
-    <aop:config proxy-target-class="false">
+    <!--expose-proxy属性表示的是是否把代理类暴露到当前线程。一般默认为true.-->
+    <!--最根本的原因就是目标类里面的方法互相调用时，切面是不起作用的。-->
+    <!--因为目标类A的方法1调用方法2时，spring容器中目标类A的代理类ProxyA认为不应该去代理，就直接调了ProxyA对应的目标类来执行方法1-->
+    <!--解决办法：手动获取代理类bean来执行：ApplicationUtil.getBean()...-->
+    <aop:config proxy-target-class="false" expose-proxy="false">
         <aop:pointcut id="myPointCut" expression="execution(* org.springframework.train.aop.insight.explore.*Impl.inser*(..))"/>
         <!--一个切面只能指定一个顺序，里面的advice统一使用这个顺序，默认的顺序是最小的-22343432，最开始执行-->
         <aop:aspect id="wohaha" ref="myAspectHandler" order="2">
