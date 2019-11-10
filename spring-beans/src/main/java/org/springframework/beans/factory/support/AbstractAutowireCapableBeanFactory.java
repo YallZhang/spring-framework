@@ -402,7 +402,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
         Object result = existingBean;
         for (BeanPostProcessor processor : getBeanPostProcessors()) {
-            logger.debug("applyBeanPostProcessorsBeforeInitialization(..) 应用PostBeanProcessor: " + processor.getClass().getSimpleName());
+            logger.info("applyBeanPostProcessorsBeforeInitialization(..) 应用PostBeanProcessor: " + processor.getClass().getSimpleName()+" 的postProcessBeforeInitialization方法");
             result = processor.postProcessBeforeInitialization(result, beanName);
             if (result == null) {
                 return result;
@@ -554,6 +554,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             populateBean(beanName, mbd, instanceWrapper);
             if (exposedObject != null) {
                 //这里也是一个重点，主要是调用BeanPostProcessor对bean进行改造，同时AOP的实现原理也正是体现在这里！！
+                //
                 logger.info("initializeBean: [" + beanName + "]");
                 exposedObject = initializeBean(beanName, exposedObject, mbd);
             }

@@ -1,6 +1,5 @@
 package org.springframework.train.context.insight.s1hellospring;
 
-import org.springframework.train.context.insight.model.User;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.core.io.ClassPathResource;
@@ -25,7 +24,7 @@ public class BeanFactoryOnly {
         //此种方式获取bean和Context无关，只是利用BeanFactory的功能创建bean.
 
         System.out.println("---------getBean开始----------");
-        User user = factory.getBean("user", User.class);
+        org.springframework.train.context.insight.model.User user = factory.getBean("user", org.springframework.train.context.insight.model.User.class);
         System.out.println("---------getBean结束----------");
 
         System.out.println("打印user:" + user);

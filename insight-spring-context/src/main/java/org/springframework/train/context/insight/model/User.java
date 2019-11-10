@@ -4,6 +4,10 @@ public class User {
     private int id;
     private String name;
 
+    public static void main(String[] args) {
+        System.out.println();
+    }
+
     public void setName(String name) {
         this.name = name;
     }
