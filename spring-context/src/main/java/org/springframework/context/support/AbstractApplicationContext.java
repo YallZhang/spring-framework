@@ -541,17 +541,23 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader i
                 logger.info("四、postProcessBeanFactory end...........");
                 System.out.println();
 
-                // Invoke factory processors registered as beans in the context.
+                // Invoke factory的BeanProcessors registered as beans in the context.
                 //beanFactoryPostprocessor的作用是在beanFactory初始化之后提供一个修改beanFactory的机会
                 //spring提供了不少实现，最常用的三个：  propertyPlaceholerConfigurer、CustomerEditorConfigurer、propertyOverrideConfigurer等。
                 //propertyPlaceholerConfigurer：从.properties文件中读数据替换xml中的占位符${}
                 //propertyOverrideConfigurer:从.properties文件中读数据替换xml的值，和上面的有点类似，但这个智能一点，而且可以有默认值，如果properties文件中没有定义，不会报错。
-                //CustomerEditorConfigurer。这个是用来向容器注册propertyEditor的。propertyEditor是一个接口有里面主要有两个方法：setAsText(),getAsText().顾名思义，把字符串解析成值。xml文件里我们填的都是字符串，而转成bean的属性，需要一个editor。spring 默认有一些可以处理基础数据类型和byteArray.File.url.uuid什么的，如果想要自己拓展,需要自己写一个类继承PropertyEditorSupport,他实现了PropertyEditor接口，我们继承更方便，写好自己的editer之后需要配置CustomerEditorConfigurer
+                //CustomerEditorConfigurer。这个是用来向容器注册propertyEditor的。
+                // propertyEditor是一个接口有里面主要有两个方法：setAsText(),getAsText().
+                // 顾名思义，把字符串解析成值。xml文件里我们填的都是字符串，而转成bean的属性，需要一个editor。
+                // spring 默认有一些可以处理基础数据类型和byteArray.File.url.uuid什么的，
+                // 如果想要自己拓展,需要自己写一个类继承PropertyEditorSupport,
+                // 他实现了PropertyEditor接口，我们继承更方便，写好自己的editer之后需要配置CustomerEditorConfigurer.
                 //当Spring createBean的时候，就是在instantiateBean方法中会先创建BeanWrapper 然后initBeanWrapper()。
                 // 在这个方法中beanWrapper又会将这些以及spring提供的公共的Editor注册给自己。
                 // 然后在接下来的populateBean()中，会调用 Object resolvedValue =valueResolver.resolveValueIfNecessary( "bean property '"  + pv.getName() +  "'" , pv.getValue());
                 // 这个方法再重载一下，最终就会用到Editor将beanDefinition中存的信息转成相应的类型，返回，然后注入给bean。
                 logger.info("五、invokeBeanFactoryPostProcessors begin...........");
+                //这里可以当做spring的扩展点。
                 invokeBeanFactoryPostProcessors(beanFactory);
                 logger.info("五、invokeBeanFactoryPostProcessors end...........");
                 System.out.println();

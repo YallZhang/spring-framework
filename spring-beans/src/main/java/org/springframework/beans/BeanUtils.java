@@ -137,7 +137,9 @@ public abstract class BeanUtils {
         try {
             logger.debug("开始反射创建bean:" + ctor.getName());
             ReflectionUtils.makeAccessible(ctor);
-            return ctor.newInstance(args);
+            T obj= ctor.newInstance(args);
+            logger.debug("反射创建bean结束:" + ctor.getName());
+            return obj;
         } catch (InstantiationException ex) {
             throw new BeanInstantiationException(ctor, "Is it an abstract class?", ex);
         } catch (IllegalAccessException ex) {

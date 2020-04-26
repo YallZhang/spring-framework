@@ -241,9 +241,11 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
         Object sharedInstance = getSingleton(beanName);
         if (sharedInstance != null && args == null) {
             if (logger.isDebugEnabled()) {
-                //返回指定的singleton bean是否正在创建（在整个工厂内）。
-                if (isSingletonCurrentlyInCreation(beanName)) {
-                    logger.debug("Returning eagerly cached instance of singleton bean '" + beanName + "' that is not fully initialized yet - a consequence of a circular reference");
+                logger.debug("scope=singleton  从singletonsCurrentlyInCreation中判断 [" + beanName + "] 是否是正在创建中的状态");
+                boolean creating = isSingletonCurrentlyInCreation(beanName);
+                logger.debug(beanName + "判断的结果: 正在创建中?[" + creating + "]");
+                if (creating) {
+                    logger.error("发现了循环依赖！！Returning eagerly cached instance of singleton bean '" + beanName + "' that is not fully initialized yet - a consequence of a circular reference");
                 } else {
                     logger.debug("Returning cached instance of singleton bean '" + beanName + "'");
                 }
@@ -254,6 +256,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
             // Fail if we're already creating this bean instance:
             // We're assumably within a circular reference.
             if (isPrototypeCurrentlyInCreation(beanName)) {
+                logger.error("scope=protoType的Bean无法解决循环依赖。检测到循环依赖，抛出BeanCurrentlyInCreationException异常");
                 throw new BeanCurrentlyInCreationException(beanName);
             }
 
@@ -368,6 +371,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
                 throw new BeanNotOfRequiredTypeException(name, requiredType, bean.getClass());
             }
         }
+        logger.debug("bean:" + bean);
         return (T) bean;
     }
 

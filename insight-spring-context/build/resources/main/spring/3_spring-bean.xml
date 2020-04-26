@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/context
+            http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- 当注解和spring.xml文件同时存在时，且id名相同，那么xml文件的bean的优先级高于注解的bean，注解bean会被覆盖。
+         具体是在BeanDefinition缓存中覆盖的-->
+    <!--日志如下：[o.s.b.f.s.DefaultListableBeanFactory:809] Overriding bean definition for bean 'user' with a different definition:
+    replacing
+             [Generic bean: class [org.springframework.train.context.insight.s3propertyinject.User]; scope=singleton; abstract=false; lazyInit=false; autowireMode=0; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=null; factoryMethodName=null; initMethodName=null; destroyMethodName=null; defined in file [F:\java_train_zyn\spring-framework\insight-test\target\classes\org.springframework.train.context.insight\s3propertyinject\User.class]]
+    with
+             [Generic bean: class [org.springframework.train.context.insight.s3propertyinject.User]; scope=; abstract=false; lazyInit=false; autowireMode=0; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=null; factoryMethodName=null; initMethodName=init_user; destroyMethodName=destroy_user; defined in class path resource [spring/3_spring-bean.xml]]-->
+    <!--<context:component-scan base-package="org.springframework.train.context.insight.s3propertyinject"/>-->
+
+    <!--<bean id="user" class="org.springframework.train.context.insight.s3propertyinject.User" destroy-method="destroy_user" init-method="init_user"/>-->
+
+    <!--对象创建之后，也该考虑如何给对象的属性赋值-->
+    <!-- ###############对象属性赋值(属性注入)############### -->
+    <!--方式1：直接在构造函数中指定-->
+    <!--方式2：(常用)通过set方法给属性注入值 （前提是对应类中要有public setXxx()方法-->
+    <!--<bean id="user2" class="org.springframework.train.context.insight.model.User">-->
+        <!--<property name="id" value="127"/>-->
+        <!--<property name="name" value="Jack"/>-->
+    <!--</bean>-->
+
+
+
+    <!--<bean id="userAction" class="org.springframework.train.context.insight.s3propertyinject.UserAction">-->
+        <!--<property name="userService" ref="userService"/>-->
+    <!--</bean>-->
+
+    <bean id="userService" class="org.springframework.train.context.insight.s3propertyinject.UserService">
+        <property name="userDao" ref="userDao"/>
+    </bean>
+    <bean id="userDao" class="org.springframework.train.context.insight.s3propertyinject.UserDao"/>
+
+    <!--由于action依赖service，service依赖dao，上面set方式需要写三段配置，
+    而下面只需要通过一个内部bean标签就可以搞定。上三段等价于：-->
+    <!--他们的区别就在于：上面的是分开定义的，所以别的bean也可以用，相当于全局变量的概念；
+    但是内部bean只能自己使用，相当于局部变量的概念。
+    上面的三段更清晰，便于查看错误。-->
+    <!-- ##############内部bean############## -->
+    <!--<bean id="userAction2" class="org.springframework.train.context.insight.s3propertyinject.UserAction">-->
+        <!--<property name="userService">-->
+            <!--<bean class="org.springframework.train.context.insight.s3propertyinject.UserService">-->
+                <!--<property name="userDao">-->
+                    <!--<bean class="org.springframework.train.context.insight.s3propertyinject.UserDao"/>-->
+                <!--</property>-->
+            <!--</bean>-->
+        <!--</property>-->
+    <!--</bean>-->
+
+    <!--方式3：-->
+    <!--  p名称空间给对象的属性注入值。也属于Set方式注入值。 -->
+    <!--方式4：-->
+    <!-- 自动装配-->
+    <!--方式5：-->
+    <!--5、注解@Compontent-->
+</beans>
